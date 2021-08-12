@@ -16,7 +16,11 @@ export function getLocaleMetadata(params: Params) {
   const { i18n } = params.nextConfig
   const { cookies, headers, nextConfig, url } = params
   const path = normalizeLocalePath(url.pathname, i18n.locales)
-  const domain = detectDomainLocale(i18n.domains, getHostname(url, headers))
+  const overrideHostHeader = i18n.overrideHostHeader
+  const domain = detectDomainLocale(
+    i18n.domains,
+    getHostname(url, overrideHostHeader, headers)
+  )
   const defaultLocale = domain?.defaultLocale || i18n.defaultLocale
   const preferredLocale = getAcceptPreferredLocale(i18n, headers)
   return {
@@ -70,11 +74,14 @@ function getAcceptPreferredLocale(
 
 function getHostname(
   parsed: { hostname?: string | null },
+  overrideHostHeader?: string,
   headers?: { [key: string]: string | string[] | undefined }
 ) {
-  return ((!Array.isArray(headers?.host) && headers?.host) || parsed.hostname)
-    ?.split(':')[0]
-    .toLowerCase()
+  const hostHeader = overrideHostHeader ?? 'host'
+  const hostName = ((!Array.isArray(headers?.[hostHeader]) &&
+    headers?.[hostHeader]) ||
+    parsed.hostname) as string | undefined
+  return hostName?.split(':')[0].toLowerCase()
 }
 
 function getRedirect({

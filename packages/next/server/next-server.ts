@@ -661,8 +661,12 @@ export default class Server {
           const { i18n } = this.nextConfig
 
           if (i18n) {
-            const { host } = req?.headers || {}
+            const {
+              host: defaultHost,
+              [i18n.overrideHostHeader as string]: overrideHost,
+            } = req.headers || {}
             // remove port from host and remove port if present
+            const host = (defaultHost || overrideHost) as string | undefined
             const hostname = host?.split(':')[0].toLowerCase()
             const localePathResult = normalizeLocalePath(pathname, i18n.locales)
             const { defaultLocale } =

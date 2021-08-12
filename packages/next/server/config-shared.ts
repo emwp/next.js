@@ -11,6 +11,7 @@ export type NextConfigComplete = NoOptionals<NextConfig>
 export interface I18NConfig {
   defaultLocale: string
   domains?: DomainLocale[]
+  overrideHostHeader?: string
   localeDetection?: false
   locales: string[]
 }

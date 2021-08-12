@@ -363,8 +363,9 @@ export function getUtils({
     } catch (_) {
       acceptPreferredLocale = detectedLocale
     }
-
-    const { host } = req.headers || {}
+    const { [i18n.overrideHostHeader ?? '']: overrideHost, host: defaultHost } =
+      req.headers || {}
+    const host = (overrideHost || defaultHost) as string
     // remove port from host and remove port if present
     const hostname = host && host.split(':')[0].toLowerCase()
 
